@@ -2,9 +2,9 @@
 
 
 ## USER_MASTER
-+----+-------+-------+---------+-----------+---------+
-| ID | FNAME | LNAME | UNAME   | PASSWORD  | ROLE_ID |
-+----+-------+-------+---------+-----------+---------+
++----+-------+-------+---------+-----------+---------+  
+| ID | FNAME | LNAME | UNAME   | PASSWORD  | ROLE_ID |  
++----+-------+-------+---------+-----------+---------+  
 | 1  | ADMIN | ADMIN | ADMIN   | ADMIN     | 0       | <-- Added by MainApp.py Program 
 +----+-------+-------+---------+-----------+---------+
 | 2  | BASIC | USER  | USER01  | pass      | 1       | <-- This and below, Added for Unit test via dummy_data_init.py
