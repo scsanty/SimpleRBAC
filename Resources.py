@@ -79,18 +79,3 @@ class Resource_3:
 
 	def do_stuffs(self):
 		pass
-
-
-
-
-
-
-
-
-import sqlite3
-conn = sqlite3.connect("temp.db")
-res = conn.execute("select AUTH_NAME from AUTH_MASTER where AUTH_NAME='Blah'").fetchall()
-res
-
-test = Resource_1(conn)
-test.access_validator('BUSER00')
