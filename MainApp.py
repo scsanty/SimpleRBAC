@@ -2,9 +2,8 @@ import hashlib
 import sqlite3
 import dummy_data_init
 import getpass
-import os, sys
+import os
 from tabulate import tabulate
-import pandas as pd
 from SimpleRBAC import SimpleRBAC
 from UserManagement import UserManagement
 import Resources
@@ -40,7 +39,7 @@ class MainAppCLI():
 
 		if wronginputcounter == 3:
 			print("Try limit exceeded")
-			sys.exit(0)
+			exit()
 
 		self.question_dummy_data_load()
 		# elements, headers = self.simplerbac.view_users_accesses(view_type=2)
@@ -61,9 +60,13 @@ class MainAppCLI():
 
 	def accessresource(self):
 		def call_resource(resource_name):
-			obj = None
-			exec("obj = Resources."+resource_name+"()")
+			localdict = locals()
+			exec("obj = Resources."+resource_name+"(self.conn)", globals(), localdict)
+			obj = localdict['obj']
+			print("\n\nThis is a dummy resource. No functions are defined here\n\n\n\n\n\n\n\n\n\n\n")
 			obj.access_validator(self.uname)
+			input('\n\n\n\n\n\n\n\nPress enter to exit this resource........')
+			self.clear()
 
 		resource_table = self.simplerbac.get_from_masters('RESOURCE')
 		resource_table = [[i+1, resource_table[i][0], resource_table[i][1]] for i in range(len(resource_table))]
@@ -71,7 +74,7 @@ class MainAppCLI():
 		print("Please type the Sl.No. of the resource you want to access\nType < to go back")
 		choice_dict = {f'{i[0]}': f"{i[1]}" for i in resource_table}
 		choice_dict['<'] = "Go Back"
-		ret = dicti.get(
+		ret = choice_dict.get(
 			input(
 				"App>"
 				), lambda:print("Invalid option\nTry Again"))
@@ -80,10 +83,10 @@ class MainAppCLI():
 			return
 		elif ret != None:
 			call_resource(ret)
-		self.call_accessresource()
+		self.accessresource()
 
 	def viewmyaccesses(self):
-		elements, headers = self.simplerbac.view_users_accesses(self.uname)
+		elements, headers = self.uman.view_users_accesses(self.uname)
 		print(tabulate(elements, tablefmt='pretty', headers=headers))
 
 	def admin_session(self):
@@ -92,14 +95,14 @@ class MainAppCLI():
 				fname = input("Input First Name of the user: ")
 				lname = input("Input Last Name of the user: ")
 				uname = input("Input User Name of the user: ")
-				passw = input("Input Password of the user: ")
+				passw = getpass.getpass("Input Password of the user: ")
 
 				print(self.uman.add_user(fname, lname, uname, passw))
 
 			def call_edituser():
 				uname = input("Input User Name of the user: ")
 				if not self.uman.validate_user(uname):
-					print("User doesn't exist")
+					print("User doesn't exist\n\n")
 					return
 
 				editdict = {'FNAME': None, 'LNAME': None, 'PASSWORD': None}
@@ -119,7 +122,7 @@ class MainAppCLI():
 			def call_deleteuser():
 				uname = input("Input User Name of the user: ")
 				if not self.uman.validate_user(uname):
-					print("User doesn't exist")
+					print("User doesn't exist\n\n")
 					return\
 				print(self.simplerbac.delete_user_role_map(user_id = uname, resolve_pk=True))
 				print(self.uman.delete_user(uname))
@@ -129,7 +132,7 @@ class MainAppCLI():
 				if not self.uman.validate_user(uname):
 					print("User doesn't exist")
 					return
-				role_table = get_from_masters('ROLE')
+				role_table = self.simplerbac.get_from_masters('ROLE')
 				role_table = [[i+1, role_table[i][0], role_table[i][1]] for i in range(len(role_table))]
 				print(tabulate(role_table, tablefmt='pretty', headers=['Sl.No.', 'Role Name', 'Description']))
 
@@ -145,15 +148,25 @@ class MainAppCLI():
 				except Exception as e:
 					print(str(e))
 					return
-				choices = [role_table[i][0] for i in choices]
-				print(self.simplerbac.add_user_role_map(self, uname, role_name, resolve_pk=True))
+				choices = [role_table[i][1] for i in choices]
+				print(self.simplerbac.add_user_role_map(uname, choices, resolve_pk=True))
+
+			def call_viewassignedroles():
+				uname = input("Input User Name of the user: ")
+				if not self.uman.validate_user(uname):
+					print("User doesn't exist")
+					return
+				role_table = self.simplerbac.get_roles_assigned_to_user(uname)
+				role_table = [[i+1, role_table[i][0], role_table[i][1]] for i in range(len(role_table))]
+				print(tabulate(role_table, tablefmt='pretty', headers=['Sl.No.', 'Role Name', 'Description']))
+				print("\n\n")
 
 			def call_removeroles():
 				uname = input("Input User Name of the user: ")
 				if not self.uman.validate_user(uname):
 					print("User doesn't exist")
 					return
-				role_table = get_roles_assigned_to_user()
+				role_table = self.simplerbac.get_roles_assigned_to_user(uname)
 				role_table = [[i+1, role_table[i][0], role_table[i][1]] for i in range(len(role_table))]
 				print(tabulate(role_table, tablefmt='pretty', headers=['Sl.No.', 'Role Name', 'Description']))
 
@@ -169,15 +182,16 @@ class MainAppCLI():
 				except Exception as e:
 					print(str(e))
 					return
-				choices = [role_table[i][0] for i in choices]
-				print(self.simplerbac.add_user_role_map(self, uname, role_name, resolve_pk=True))
+				choices = [role_table[i][1] for i in choices]
+				print(self.simplerbac.delete_user_role_map(uname, choices, resolve_pk=True))
 
 			print(
 				"Type 1 to Create User\n" \
 				"Type 2 to Edit User\n" \
 				"Type 3 to Delete User\n" \
 				"Type 4 to Assign Roles to User\n" \
-				"Type 5 to Remove Roles from User\n" \
+				"Type 5 to View Assign Roles for User\n" \
+				"Type 6 to Remove Roles from User\n" \
 				"Type < to Go Back\n"
 			)
 			ret = {
@@ -185,7 +199,8 @@ class MainAppCLI():
 				'2': call_edituser,
 				'3': call_deleteuser,
 				'4': call_assignroles,
-				'5': call_removeroles,
+				'5': call_viewassignedroles,
+				'6': call_removeroles,
 				'<': lambda:"Go Back"
 			}.get(
 				input(
@@ -205,16 +220,18 @@ class MainAppCLI():
 
 			def call_editrole():
 				role_name = input("Input Name of the role: ")
+				new_role_name = None
 				if input("Do you want to edit the Name of the role: ").upper() == 'Y':
-					resource_name = input("Input Name of the role: ")
+					new_role_name = input("Input Name of the role: ")
 				description = None
 				if input("Do you want to edit the Description of the role: ").upper() == 'Y':
 					description = input("Input Description for the role: ")
-				print(self.simplerbac.edit_in_masters('ROLE', role_name, description))
+				if new_role_name or description:
+					print(self.simplerbac.edit_in_masters('ROLE', role_name, new_role_name, description))
 
 			def call_deleterole():
 				role_name = input("Input Name of the role: ")
-				print(self.simplerbac.delete_role_auth_map(role_id=role_name, resolve_pk=True))
+				print(self.simplerbac.delete_role_resource_auth_map(role_id=role_name, resolve_pk=True))
 				print(self.simplerbac.delete_user_role_map(role_id=role_name, resolve_pk=True))
 				print(self.simplerbac.delete_in_masters('ROLE', role_name))
 
@@ -227,7 +244,7 @@ class MainAppCLI():
 					resource_choice = input("Please type the Sl.No. of the resource you want to add to the role\nApp>")
 
 					try:
-						resource_choice = int(resource_choice) #set(int(i.strip())-1 for i in choices.split(sep=','))
+						resource_choice = int(resource_choice) - 1 #set(int(i.strip())-1 for i in choices.split(sep=','))
 						if not {resource_choice}.issubset(set(range(len(resource_table)))):
 							print("Sl.No. from the given table is only accepted")
 							return
@@ -237,7 +254,7 @@ class MainAppCLI():
 					except Exception as e:
 						print(str(e))
 						return
-					resource_choice = resource_table[resource_choice][0]
+					resource_choice = resource_table[resource_choice][1]
 
 					auth_table = self.simplerbac.get_auth_for_resource(resource_choice)
 					auth_table = [[i+1, auth_table[i][0], auth_table[i][1]] for i in range(len(auth_table))]
@@ -255,7 +272,7 @@ class MainAppCLI():
 					except Exception as e:
 						print(str(e))
 						return
-					auth_choices = [auth_table[i][0] for i in auth_choices]
+					auth_choices = [auth_table[i][1] for i in auth_choices]
 
 					print(self.simplerbac.add_role_resource_auth_map(role_name, resource_choice, auth_choices, resolve_pk=True))
 
@@ -331,12 +348,14 @@ class MainAppCLI():
 
 			def call_editresource():
 				resource_name = input("Input Name of the resource: ")
+				new_resource_name = None
 				if input("Do you want to edit the Name of the resource: ").upper() == 'Y':
-					resource_name = input("Input Name of the resource: ")
+					new_resource_name = input("Input Name of the resource: ")
 				description = None
 				if input("Do you want to edit the Description of the resource: ").upper() == 'Y':
 					description = input("Input Description for the resource: ")
-				print(self.simplerbac.edit_in_masters('RESOURCE', resource_name, description))
+				if new_resource_name or description:
+					print(self.simplerbac.edit_in_masters('RESOURCE', resource_name, new_resource_name, description))
 
 			def call_deleteresource():
 				resource_name = input("Input Name of the resource: ")

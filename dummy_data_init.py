@@ -2,7 +2,7 @@ import hashlib
 import sqlite3
 
 def dummy_data_init(conn):
-	conn.execute("insert into USER_MASTER (FNAME, LNAME, UNAME, PASSWORD) values " \
+	conn.execute("insert into USER_MASTER (FNAME, LNAME, USER_NAME, PASSWORD) values " \
 		f"('Basic', 'USER', 'BUSER00', '{hashlib.sha256('pass'.encode()).hexdigest()}')," \
 		f"('DUMMY', 'USER1', 'DUSER01', '{hashlib.sha256('dummypass'.encode()).hexdigest()}')," \
 		f"('DUMMY', 'USER2', 'DUSER02', '{hashlib.sha256('dummypass'.encode()).hexdigest()}')," \
@@ -13,18 +13,17 @@ def dummy_data_init(conn):
 		f"('DUMMY', 'USER7', 'DUSER07', '{hashlib.sha256('dummypass'.encode()).hexdigest()}')," \
 		f"('DUMMY', 'USER8', 'DUSER08', '{hashlib.sha256('dummypass'.encode()).hexdigest()}');")
 
-	conn.execute("insert into ROLE_MASTER (ROLE_NAME) values " \
-		"('ROLE_1')," \
-		"('ROLE_2')," \
-		"('ROLE_3');")
+	conn.execute("insert into ROLE_MASTER (ROLE_NAME, DESCRIPTION) values " \
+		"('ROLE_1', 'Dummy Role 1')," \
+		"('ROLE_2', 'Dummy Role 2')," \
+		"('ROLE_3', 'Dummy Role 3');")
 
-	conn.execute("insert into RESOURCE_MASTER (RESOURCE_NAME) values " \
-		"('RESOURCE_1')," \
-		"('RESOURCE_2')," \
-		"('RESOURCE_3');")
+	conn.execute("insert into RESOURCE_MASTER (RESOURCE_NAME, DESCRIPTION) values " \
+		"('RESOURCE_1', 'Dummy Resource 1')," \
+		"('RESOURCE_2', 'Dummy Resource 1')," \
+		"('RESOURCE_3', 'Dummy Resource 1');")
 
 	conn.execute("insert into AUTH_MASTER (AUTH_NAME, DESCRIPTION) values " \
-		"('READ', 'Read Access to a resource')," \
 		"('READ', 'Read Access to a resource')," \
 		"('MODIFY', 'Modify Access to a resource (Text, fields)')," \
 		"('EXECUTE', 'Access to Execute a resource(scripts/functions)')," \
@@ -33,7 +32,6 @@ def dummy_data_init(conn):
 		"('PARTIAL_READ_2', 'Developer defined Custom authorisation');")
 
 	conn.execute("insert into USER_ROLE_MAP (USER_ID, ROLE_ID) values " \
-		"(1, 0)," \
 		"(2, 1)," \
 		"(2, 2)," \
 		"(3, 1)," \
