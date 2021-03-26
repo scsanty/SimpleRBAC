@@ -1,6 +1,6 @@
 # Bluestacks Assignment
 
-##Master Tables
+## Master Tables
 ### USER_MASTER
 
 | ID | FNAME | LNAME | UNAME   | PASSWORD  |                                                                |
@@ -44,7 +44,7 @@ Added for Unit test via dummy_data_init.py
 | 5  | PARTIAL_READ_1 | Developer defined Custom authorisation          |
 | 6  | PARTIAL_READ_2 | Developer defined Custom authorisation          |
 
-##Mapping Tables
+## Mapping Tables
 ### USER_ROLE_MAP
 Added for Unit test via dummy_data_init.py
 | ID | USER_ID | ROLE_ID |
