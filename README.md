@@ -101,12 +101,12 @@ Added for Unit test via dummy_data_init.py
 4) Resources - Custom developments on the App (Consider as Unit Test)
 
 ## Libraries Used
-sqlite3 - to persist the above tables in a RDBMS
-hashlib - to store the password after encrypting it
-getpass - to hide the password when logging in
-os - to run screen clear function
-tabulate - to print the tables in a pretty manner
-
+sqlite3 - to persist the above tables in a RDBMS  
+hashlib - to store the password after encrypting it  
+getpass - to hide the password when logging in  
+os - to run screen clear function  
+tabulate - to print the tables in a pretty manner  
+  
 ## Default ID/Pass
 ADMIN ADMIN
 
