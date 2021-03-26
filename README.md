@@ -1,6 +1,36 @@
 # Bluestacks Assignment
 
-## Master Tables
+## Default ID/Pass
+ADMIN ADMIN
+
+## How to use:
+1) Start at MainApp.py
+2) You'll need to log in
+3) You can register your resources
+4) You can define new role
+5) You can map authrisations to your role
+6) You can map users to your roles
+7) Resources' __init__ handles the possible authorisations it has, this can be probably moved to some other function. Has room for improvement
+
+## Classes
+1) SimpleRBAC - Manages Roles, Authorisation, Resources
+2) UserManagement - Manages Users
+3) MainAppCLI - CLI of the App
+4) Resources - Custom developments on the App (Consider as Unit Test)
+
+## Libraries Used
+sqlite3 - to persist the above tables in a RDBMS  
+hashlib - to store the password after encrypting it  
+getpass - to hide the password when logging in  
+os - to run screen clear function  
+tabulate - to print the tables in a pretty manner 
+
+
+
+## RBAC Modelling
+The Users, Roles, Resources, and Authorisations are star schema modelled.
+Below is the dummy data for master and mapping tables
+### Master Tables
 ### USER_MASTER
 
 | ID | FNAME | LNAME | UNAME   | PASSWORD  |                                                                |
@@ -44,7 +74,7 @@ Added for Unit test via dummy_data_init.py
 | 5  | PARTIAL_READ_1 | Developer defined Custom authorisation          |
 | 6  | PARTIAL_READ_2 | Developer defined Custom authorisation          |
 
-## Mapping Tables
+### Mapping Tables
 ### USER_ROLE_MAP
 Added for Unit test via dummy_data_init.py
 | ID | USER_ID | ROLE_ID |
@@ -94,29 +124,5 @@ Added for Unit test via dummy_data_init.py
 | 8  | 3           | 5       |
 | 9  | 3           | 6       |
 
-## Classes
-1) SimpleRBAC - Manages Roles, Authorisation, Resources
-2) UserManagement - Manages Users
-3) MainAppCLI - CLI of the App
-4) Resources - Custom developments on the App (Consider as Unit Test)
-
-## Libraries Used
-sqlite3 - to persist the above tables in a RDBMS  
-hashlib - to store the password after encrypting it  
-getpass - to hide the password when logging in  
-os - to run screen clear function  
-tabulate - to print the tables in a pretty manner  
+ 
   
-## Default ID/Pass
-ADMIN ADMIN
-
-## How to use:
-1) Start at MainApp.py
-2) You'll need to log in
-3) You can register your resources
-4) You can define new role
-5) You can map authrisations to your role
-6) You can map users to your roles
-7) Resources' __init__ handles the possible authorisations it has
-
-
