@@ -1,4 +1,4 @@
-# Bluestacks Assignment
+# Simple Role Based Access Control
 
 ## Default ID/Pass
 ADMIN ADMIN
